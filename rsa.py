@@ -3,12 +3,13 @@ import sys, time, utils
 
 from typing import Tuple, List, Dict, Union
 
+
 class RSA(object):
-    def __init__(self, 
-                 bit_size: int = 1024, 
-                 verbose=False, 
+    def __init__(self,
+                 bit_size: int = 1024,
+                 verbose=False,
                  encode_method: str = "oaep"
-    ) -> None:
+                 ) -> None:
         self.size = int(bit_size)
         assert self.size >= 512, "key size bit too small, it should be at least 256 bit and must be 2^n bit"
         self.verbose = verbose
@@ -23,7 +24,6 @@ class RSA(object):
     def generate_key_pairs(self) -> Tuple[int, int]:
         """
         generate public and private key pairs.
-
         store the private key and public key.
         only return the public key
         """
@@ -33,7 +33,7 @@ class RSA(object):
         n = p * q
 
         # compute the Euler function as m
-        m = (p-1) * (q-1)
+        m = (p - 1) * (q - 1)
 
         # randomly pick an integer e that is relatively prime to m
         e = 65537 if 65537 < m else 11
@@ -47,19 +47,18 @@ class RSA(object):
         return (n, e)
 
     def encrypt(self, plain_text: Union[str, int]) -> List[int]:
-        """ 
+        """
         Encrypt a piece of plain text into cipher text.
-        
+
         Firstly obtian the utf-8 value of each character in the str.
         We compute the cipher number of each utf-8 value. In this way,
         the chunk size can be regarded as 1 byte.
-
         Args:
         ----
             plain_text: the plain_text to be encrypted, can be str or int
         """
         n, e = self.public_key
-        
+
         if self.encode_method == "naive":
             bs = self.encoder.naive_encode(plain_text)
         if self.encode_method == "oaep":
@@ -71,34 +70,32 @@ class RSA(object):
 
         if self.verbose:
             print("| encrypt {}bytes plain text in {:.3f}s".format(
-                sys.getsizeof(plain_text), t2-t1))
+                sys.getsizeof(plain_text), t2 - t1))
         return cipher_text
 
     def decrypt(self, cipher_text: List[int], decode_type: str) -> Union[str, int]:
         """
         Decrypt a piece of cipher text using the private key
-
         To deal with negative d in private key,
         Use pow() to quickly compute c ^ d % n.
-
         We are not sure the decoding way of the plain text
         so we just return bytes.
         """
         n, d = self.private_key
-        
+
         t1 = time.time()
         plain_text = [pow(c, d, n) for c in cipher_text]
         t2 = time.time()
-        
+
         if self.verbose:
             print("| decrypt {}bytes cipher text in {:.3f}s".format(
-                sys.getsizeof(cipher_text), t2-t1))
+                sys.getsizeof(cipher_text), t2 - t1))
         if self.encode_method == "naive":
             plain_text = self.encoder.naive_decode(decode_type, plain_text)
         if self.encode_method == "oaep":
             plain_text = self.encoder.oaep_decode(decode_type, plain_text)
         return plain_text
-        
+
 
 def test_rsa(rsa_encode_method):
     sizes = [512, 1024, 2048]
@@ -131,4 +128,3 @@ def test_oaep_encode_and_decode():
         print(test_case)
         print(ll)
         assert ll == test_case, "failed"
-
