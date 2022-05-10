@@ -36,7 +36,7 @@ class Attacker(Client):
 
             # send a dummy WUP request to obtain the server's attitude
             # towards the current hacked aes key.
-            wups = WUP("I want to hack your aes key", self.mac, self.imei)
+            wups = WUP("Hack processing", self.mac, self.imei)
             encrypted_wups = [aes.encrypt(wup) for wup in wups]
 
             req = [(victim_id, C_b, wup) for wup in encrypted_wups]
@@ -46,15 +46,15 @@ class Attacker(Client):
 
         # use the hacked AES key to encrypt another plain text
         victim_aes = k_b
-        print("hacked aes key: {}".format(victim_aes))
+        print("hacked AES key: {}".format(victim_aes))
 
         aes = AES.new(victim_aes.to_bytes(16, 'big'))
 
-        wups = WUP("I hacked your aes key successfully", self.mac, self.imei)
+        wups = WUP("Hacking successfully", self.mac, self.imei)
         encrypted_wups = [aes.encrypt(wup) for wup in wups]
 
         req = [(victim_id, C, wup) for wup in encrypted_wups]
-        assert server.process_request(req) == True, "hack failed"
+        assert server.process_request(req) == True, "Hack failed"
 
         # further decrypt the victim request
         victim_text = ""
@@ -64,14 +64,14 @@ class Attacker(Client):
 
             content, mac, imei = text.decode('utf-8').split('\t')
             victim_text += content.strip()
-        print("Victim WUP with plain text: {}".format(victim_text))
+        print("Decrypted Cyphertext: {}".format(victim_text))
 
         return victim_aes
 
 
 def test_hack(encode_method):
     user1 = Client(rsa_encode_method = encode_method)
-    req1 = user1.send_request("wei cheng yong xiao is a good man.")
+    req1 = user1.send_request("UVA is an iconic public institution of higher education.")
 
     server = Server()
     server.register(user1)

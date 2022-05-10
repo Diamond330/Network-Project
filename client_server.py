@@ -77,7 +77,7 @@ class Server(object):
 
         # decrypt the RSA-encrypted AES key it received from the client
         if request_user_id not in self.client2rsa.keys():
-            print("The user of this request is not registered !")
+            print("User is not registered !")
             return False
         aes_key = self.client2rsa[request_user_id].decrypt(encrypted_aes_key, "int")
         aes_key = aes_key & utils.bit_mask(128)
@@ -94,12 +94,12 @@ class Server(object):
             if checksum != sha.hexdigest().encode('utf-8'):
                 # print(checksum)
                 # print(sha.hexdigest().encode('utf-8'))
-                print("Invalid WUP request. checksum not equal")
+                print("Invalid WUP request")
                 return False
 
             content, mac, imei = text.decode('utf-8').split('\t')
             plain_text += content.strip()
-        print("Valid WUP with plain text: {}".format(plain_text))
+        print("Valid WUP request, massage: {}".format(plain_text))
         return True
 
 
@@ -115,7 +115,7 @@ def test_communicate():
     req1 = user1.send_request("hello world")
 
     # user2 -> server
-    req2 = user2.send_request("wei cheng yong xiao is a good man.")
+    req2 = user2.send_request("UVA is an iconic public institution of higher education.")
 
     # user3 -> server
     req3 = user3.send_request("unregistered request")
