@@ -2,7 +2,7 @@ import os, utils, random
 
 from Crypto.Cipher import AES
 from typing import Dict, List, Tuple
-from client_server import WUP, Client, Server
+from communication_model import WUP_request, Client, Server
 
 class Attacker(Client):
     def __init__(self):

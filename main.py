@@ -1,5 +1,5 @@
 from rsa import test_rsa, test_oaep_encode_and_decode
-from client_server import test_communicate
+from communication_model import test_communicate
 from attacker import test_hack
 
 def main():
