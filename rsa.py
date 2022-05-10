@@ -117,8 +117,8 @@ def test_rsa(rsa_encode_method):
 def test_oaep_encode_and_decode():
     encoder = utils.DataEncoder()
     testsets = [
-        ["str", "hello world hello world"],
-        ["str", "wei cheng yong xiao is a good person."],
+        ["str", "Network secruity is a interesting topic"],
+        ["str", "CS6501 is a great class."],
         ["int", 34253623],
         ["int", 2342345844594389],
     ]
