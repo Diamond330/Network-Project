@@ -2,7 +2,7 @@
 
 ## Requirement
 
-* pycrypto 2.6.1
+pycrypto 2.6.1
 
 you can install this libray by
 
