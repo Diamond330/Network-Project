@@ -16,4 +16,4 @@ To run the experiment:
 python main.py
 ```
 
-to see all of the required results.
+to see all results.
