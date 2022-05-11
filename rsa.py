@@ -174,7 +174,6 @@ def test_rsa(rsa_encode_method):
                 assert pt == text, "failed"
         print("| All test passed!")
 
-
 def test_oaep_encode_and_decode():
     encoder = utils.DataEncoder()
     testsets = [
