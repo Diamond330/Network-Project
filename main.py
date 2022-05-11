@@ -43,28 +43,28 @@ def main():
     # change encode_method to test naive and oaep
 
     # user = Client('naive')
-    # user = Client('oaep')
-    # req = user1.send_request("no pain, no gain")
-    # server = Server()
-    # server.register(user)
-    # attacker = Hacker()
-    # attacker.hack(user.rsa.public_key, req, server)
+    user = Client('oaep')
+    req = user.send_request("no pain, no gain")
+    server = Server()
+    server.register(user)
+    attacker = Hacker()
+    attacker.hack(user.rsa.public_key, req, server)
 
     ##### oaep #####
-    encoder = utils.DataEncoder()
-    testsets = [
-        ["str", "Network secruity is a interesting topic"],
-        ["str", "CS6501 is a great class."],
-        ["int", 34253623],
-        ["int", 2342345844594389],
-    ]
-    for type, text in testsets:
-        en_text = encoder.oaep_encode(text)
-        de_text = encoder.oaep_decode(type, en_text)
-        if de_text == text:
-            print("success")
-        else:
-            print("fail")
+    # encoder = utils.DataEncoder()
+    # testsets = [
+    #     ["str", "Network secruity is a interesting topic"],
+    #     ["str", "CS6501 is a great class."],
+    #     ["int", 34253623],
+    #     ["int", 2342345844594389],
+    # ]
+    # for type, text in testsets:
+    #     en_text = encoder.oaep_encode(text)
+    #     de_text = encoder.oaep_decode(type, en_text)
+    #     if de_text == text:
+    #         print("success")
+    #     else:
+    #         print("fail")
 
 if __name__ == "__main__":
     main()

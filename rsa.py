@@ -51,7 +51,7 @@ class RSA(object):
     #                     return i, j
     #                 j += 1
 
-    def generate_key_pairs(self) -> Tuple[int, int]:
+    def generate_key_pairs(self):
 
         # randomly sample two large prime p and q
         p = utils.sample_prime_with_bit_size(self.size // 2)
@@ -101,13 +101,7 @@ class RSA(object):
     #     return int((k * oula + 1) / e)
 
 
-    def encrypt(self, plain_text: Union[str, int]) -> List[int]:
-        """
-        Encrypt a piece of plain text into ciphertext.
-        First, get the UTF-8 value of each character in str.
-        We calculate the number of passwords for each UTF-8 value.
-        In this way, the size of chunk can be regarded as one byte.
-        """
+    def encrypt(self, plain_text):
         n, e = self.public_key
 
         if self.encode_method == "naive":
@@ -135,39 +129,3 @@ class RSA(object):
         if self.encode_method == "oaep":
             plain_text = self.encoder.oaep_decode(decode_type, plain_text)
         return plain_text
-
-
-def test_rsa(rsa_encode_method):
-    """
-    set different sizes
-    test rsa
-    """
-    sizes = [512, 1024, 2048]
-    for size in sizes:
-        r = RSA(size, verbose=True, encode_method=rsa_encode_method)
-        pk = r.generate_key_pairs()
-        print("| Test RSA algorithm with key size {}bit".format(size))
-        with open("test.txt", "r") as f:
-            for text in f.readlines():
-                text_type, text = text.strip().split('\t')
-                if text_type != "str":
-                    text = eval(text)
-                ct = r.encrypt(text)
-                pt = r.decrypt(ct, text_type)
-                assert pt == text, "failed"
-        print("| All test passed!")
-
-def test_oaep_encode_and_decode():
-    encoder = utils.DataEncoder()
-    testsets = [
-        ["str", "Network secruity is a interesting topic"],
-        ["str", "CS6501 is a great class."],
-        ["int", 34253623],
-        ["int", 2342345844594389],
-    ]
-    for test_type, test_case in testsets:
-        l = encoder.oaep_encode(test_case)
-        ll = encoder.oaep_decode(test_type, l)
-        print(test_case)
-        print(ll)
-        assert ll == test_case, "failed"
