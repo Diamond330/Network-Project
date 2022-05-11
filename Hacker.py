@@ -1,6 +1,7 @@
 import utils, random
 from Crypto.Cipher import AES
 from communication_model import WUP_request
+import socket
 
 class Hacker(object):
     def __init__(self):
