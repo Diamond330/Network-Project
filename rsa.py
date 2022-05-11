@@ -1,6 +1,28 @@
 import random, hashlib
 import sys, time, utils
 
+from typing import Tuple, List, Dict, Union
+# from Crypto.PublicKey import RSA
+# from Crypto.Cipher import PKCS1_OAEP
+# import binascii
+#
+# keyPair = RSA.generate(3072)
+#
+# pubKey = keyPair.publickey()
+# print(f"Public key:  (n={hex(pubKey.n)}, e={hex(pubKey.e)})")
+# pubKeyPEM = pubKey.exportKey()
+# print(pubKeyPEM.decode('ascii'))
+#
+# print(f"Private key: (n={hex(pubKey.n)}, d={hex(keyPair.d)})")
+# privKeyPEM = keyPair.exportKey()
+# print(privKeyPEM.decode('ascii'))
+#
+# # encryption
+# msg = 'A message for encryption'
+# encryptor = PKCS1_OAEP.new(pubKey)
+# encrypted = encryptor.encrypt(msg)
+# print("Encrypted:", binascii.hexlify(encrypted))
+
 
 class RSA(object):
     def __init__(self, bit_size = 1024,  encode_method = "oaep"):
@@ -10,7 +32,27 @@ class RSA(object):
         self.encoder = utils.DataEncoder()
         self.encode_method = encode_method
 
-    def generate_key_pairs(self):
+    # def returnED(fn):
+    #     fnPn = list()
+    #     for i in range(2, fn / 2):
+    #         if (fn % i == 0):
+    #             fnPn.append(i)
+    #     fnPn.append(fn / 2)
+    #     for i in range(fn - 1, 1, -1):
+    #         flag = True
+    #         for j in range(len(fnPn)):
+    #             if (i % fnPn[j] == 0):
+    #                 flag = False
+    #                 break
+    #         if (flag):
+    #             j = 1
+    #             while True:
+    #                 if (i * j % fn == 1):
+    #                     return i, j
+    #                 j += 1
+
+    def generate_key_pairs(self) -> Tuple[int, int]:
+
         # randomly sample two large prime p and q
         p = utils.sample_prime_with_bit_size(self.size // 2)
         q = utils.sample_prime_with_bit_size(self.size - self.size // 2)
@@ -30,7 +72,42 @@ class RSA(object):
         self.private_key = (n, d)
         return (n, e)
 
-    def encrypt(self, plain_text):
+    # def isPNs(x):
+    #     for j in range(2, x):
+    #         if (x % j == 0):
+    #             return False
+    #     return True
+    # def Is_Huzhi(int_min, int_max):
+    #     for i in range(2, int_min + 1):
+    #         if int_min % i == 0 and int_max % i == 0:
+    #             return False
+    #     return True
+    #
+    #
+    # def Creat_E(oula):
+    #     top = oula
+    #     while True:
+    #         i = randint(2, top)
+    #         for e in range(i, top):
+    #             if Is_Huzhi(e, oula):
+    #                 return e
+    #         top = i
+    #
+    #
+    # def Compute_D(oula, e):
+    #     k = 1
+    #     while (k * oula + 1) % e != 0:
+    #         k += 1
+    #     return int((k * oula + 1) / e)
+
+
+    def encrypt(self, plain_text: Union[str, int]) -> List[int]:
+        """
+        Encrypt a piece of plain text into ciphertext.
+        First, get the UTF-8 value of each character in str.
+        We calculate the number of passwords for each UTF-8 value.
+        In this way, the size of chunk can be regarded as one byte.
+        """
         n, e = self.public_key
 
         if self.encode_method == "naive":
@@ -59,3 +136,38 @@ class RSA(object):
             plain_text = self.encoder.oaep_decode(decode_type, plain_text)
         return plain_text
 
+
+def test_rsa(rsa_encode_method):
+    """
+    set different sizes
+    test rsa
+    """
+    sizes = [512, 1024, 2048]
+    for size in sizes:
+        r = RSA(size, verbose=True, encode_method=rsa_encode_method)
+        pk = r.generate_key_pairs()
+        print("| Test RSA algorithm with key size {}bit".format(size))
+        with open("test.txt", "r") as f:
+            for text in f.readlines():
+                text_type, text = text.strip().split('\t')
+                if text_type != "str":
+                    text = eval(text)
+                ct = r.encrypt(text)
+                pt = r.decrypt(ct, text_type)
+                assert pt == text, "failed"
+        print("| All test passed!")
+
+def test_oaep_encode_and_decode():
+    encoder = utils.DataEncoder()
+    testsets = [
+        ["str", "Network secruity is a interesting topic"],
+        ["str", "CS6501 is a great class."],
+        ["int", 34253623],
+        ["int", 2342345844594389],
+    ]
+    for test_type, test_case in testsets:
+        l = encoder.oaep_encode(test_case)
+        ll = encoder.oaep_decode(test_type, l)
+        print(test_case)
+        print(ll)
+        assert ll == test_case, "failed"
