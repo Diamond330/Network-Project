@@ -22,11 +22,7 @@ class RSA(object):
         self.encode_method = encode_method
 
     def generate_key_pairs(self) -> Tuple[int, int]:
-        """
-        generate public and private key pairs.
-        store the private key and public key.
-        only return the public key
-        """
+
         # randomly sample two large prime p and q
         p = utils.sample_prime_with_bit_size(self.size // 2)
         q = utils.sample_prime_with_bit_size(self.size - self.size // 2)
@@ -48,14 +44,10 @@ class RSA(object):
 
     def encrypt(self, plain_text: Union[str, int]) -> List[int]:
         """
-        Encrypt a piece of plain text into cipher text.
-
-        Firstly obtian the utf-8 value of each character in the str.
-        We compute the cipher number of each utf-8 value. In this way,
-        the chunk size can be regarded as 1 byte.
-        Args:
-        ----
-            plain_text: the plain_text to be encrypted, can be str or int
+        Encrypt a piece of plain text into ciphertext.
+        First, get the UTF-8 value of each character in str.
+        We calculate the number of passwords for each UTF-8 value.
+        In this way, the size of chunk can be regarded as one byte.
         """
         n, e = self.public_key
 
@@ -75,11 +67,8 @@ class RSA(object):
 
     def decrypt(self, cipher_text: List[int], decode_type: str) -> Union[str, int]:
         """
-        Decrypt a piece of cipher text using the private key
-        To deal with negative d in private key,
         Use pow() to quickly compute c ^ d % n.
-        We are not sure the decoding way of the plain text
-        so we just return bytes.
+        return bytes.
         """
         n, d = self.private_key
 
@@ -98,6 +87,10 @@ class RSA(object):
 
 
 def test_rsa(rsa_encode_method):
+    """
+    set different sizes
+    test rsa
+    """
     sizes = [512, 1024, 2048]
     for size in sizes:
         r = RSA(size, verbose=True, encode_method=rsa_encode_method)
